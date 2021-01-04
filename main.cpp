@@ -12,7 +12,7 @@ void PrintSignature(PEFile* pPE);
 
 int main(int argv, char* argc[]) {
 
-	LPCWSTR lpFileName = L"E:/capstone_first.exe";//文件名称或路径
+	LPCWSTR lpFileName = L"E:/capstone_first.exe";//文件名称或路径 
 
 	PEFile peFile(lpFileName);
 
