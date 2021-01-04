@@ -59,5 +59,8 @@ private:
 	*/
 	IMAGE_DOS_HEADER GetDosHeader();
 
+	/*
+	获取PE标记
+	*/
 	BYTE* GetSignature();
 };
