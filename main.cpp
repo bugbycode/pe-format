@@ -3,12 +3,12 @@
 #endif // !UNICODE
 
 #include<tchar.h>
-#include<strsafe.h>
 #include<stdio.h>
 #include<Windows.h>
 #include "PEFile.h"
 
 void PrintDosHeader(PIMAGE_DOS_HEADER pDosHeader);
+void PrintSignature(PEFile* pPE);
 
 int main(int argv, char* argc[]) {
 
@@ -20,16 +20,15 @@ int main(int argv, char* argc[]) {
 	PIMAGE_DOS_HEADER pDosHeader = &pPE->dosHeader;
 
 	PrintDosHeader(pDosHeader);
-
-	for (int index = 0; index < 4;index++) {
-		printf("%x", *pPE->signature++);
-	}
-
+	PrintSignature(pPE);
 	return 0;
 }
 
+void PrintSignature(PEFile* pPE) {
+	printf("signature    = %s", pPE->signature);
+}
+
 void PrintDosHeader(PIMAGE_DOS_HEADER pDosHeader) {
-	printf("\n");
 	printf("e_magic      = %04x\n", pDosHeader->e_magic);
 	printf("e_cblp       = %04x\n", pDosHeader->e_cblp);
 	printf("e_cp         = %04x\n", pDosHeader->e_cp);

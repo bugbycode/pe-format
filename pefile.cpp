@@ -7,6 +7,13 @@ BYTE* PEFile::GetSignature() {
 	if (readStatus == FALSE) {
 		return signature;
 	}
+	/*
+	for (UINT32 index = 0; index < 4; index++) {
+		if (index != 0 && index % 0x10 == 0) {
+			printf("\n");
+		}
+		printf("%02x ", signature[index]);
+	}*/
 	return signature;
 }
 
@@ -18,18 +25,16 @@ IMAGE_DOS_HEADER PEFile::GetDosHeader() {
 	if (readStatus == FALSE) {
 		return dosHeader;
 	}
-
 	UINT32 index = 0;
+	/*
 
 	for (index = 0; index < 64;index++) {
-		if (index != 0 && index % 0x10 == 0) {
+		printf("%02x ", dos_byte[index]);
+		if ((index + 1) % 0x10 == 0) {
 			printf("\n");
 		}
-		else if(index != 0){
-			printf(" ");
-		}
-		printf("%02x", dos_byte[index]);
-	}
+		
+	}*/
 
 	BYTE* pdos = dos_byte;
 	//可执行文件为4d 5a开头 称之为可执行文件标记
@@ -101,6 +106,26 @@ IMAGE_DOS_HEADER PEFile::GetDosHeader() {
 	dosHeader.e_lfanew = dosHeader.e_lfanew | *pdos++ << 0x08;
 	dosHeader.e_lfanew = dosHeader.e_lfanew | *pdos++ << 0x10;
 	dosHeader.e_lfanew = dosHeader.e_lfanew | *pdos++ << 0x18;
+
+	//开始读取DOS头与PE标记之前的空闲数据
+	numberOfBytesRead = 0;
+	long data_len = dosHeader.e_lfanew - 64;
+	//申请内存空间
+	this->signatureData = new BYTE[data_len];
+
+	readStatus = ReadFile(this->fileHandle, this->signatureData, data_len, &numberOfBytesRead, NULL);
+	/*
+	if (readStatus == TRUE) {
+		for (long i = 0; i < data_len;i++) {
+			printf("%02x ", *this->signatureData++);
+			if ((i + 1) % 0x10 == 0) {
+				printf("\n");
+			}
+		}
+	}
+	//重制指针指向开始地址
+	this->signatureData -= data_len;
+	*/
 	return dosHeader;
 }
 
