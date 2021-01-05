@@ -1,5 +1,55 @@
 #include "pefile.h"
 
+IMAGE_FILE_HEADER PEFile::GetFileHeader() {
+	IMAGE_FILE_HEADER fileHeader = {};
+	BYTE fileHeaderData[20];
+	DWORD numberOfBytesRead = 0;//已读取的长度
+	BOOL readStatus = ReadFile(this->fileHandle, &fileHeaderData, sizeof(fileHeaderData), &numberOfBytesRead, NULL);
+	if (readStatus == NULL) {
+		return fileHeader;
+	}
+	/*
+	for (UINT32 index = 0; index < 20; index++) {
+		printf("%02x ", fileHeaderData[index]);
+		if ((index + 1) % 0x10 == 0) {
+			printf("\n");
+		}
+	}
+	printf("\n");
+	*/
+
+	BYTE* pHeader = fileHeaderData;
+	fileHeader.Machine = *pHeader++;
+	fileHeader.Machine = fileHeader.Machine | *pHeader++ << 0x08;
+
+	fileHeader.NumberOfSections = *pHeader++;
+	fileHeader.NumberOfSections = fileHeader.NumberOfSections | *pHeader++ << 0x08;
+
+	fileHeader.TimeDateStamp = *pHeader++;
+	fileHeader.TimeDateStamp = fileHeader.TimeDateStamp | *pHeader++ << 0x08;
+	fileHeader.TimeDateStamp = fileHeader.TimeDateStamp | *pHeader++ << 0x10;
+	fileHeader.TimeDateStamp = fileHeader.TimeDateStamp | *pHeader++ << 0x18;
+
+	fileHeader.PointerToSymbolTable = *pHeader++;
+	fileHeader.PointerToSymbolTable = fileHeader.PointerToSymbolTable | *pHeader++ << 0x08;
+	fileHeader.PointerToSymbolTable = fileHeader.PointerToSymbolTable | *pHeader++ << 0x10;
+	fileHeader.PointerToSymbolTable = fileHeader.PointerToSymbolTable | *pHeader++ << 0x18;
+
+	fileHeader.NumberOfSymbols = *pHeader++;
+	fileHeader.NumberOfSymbols = fileHeader.NumberOfSymbols | *pHeader++ << 0x08;
+	fileHeader.NumberOfSymbols = fileHeader.NumberOfSymbols | *pHeader++ << 0x10;
+	fileHeader.NumberOfSymbols = fileHeader.NumberOfSymbols | *pHeader++ << 0x18;
+	
+	//可选PE头大小
+	fileHeader.SizeOfOptionalHeader = *pHeader++;
+	fileHeader.SizeOfOptionalHeader = fileHeader.SizeOfOptionalHeader | *pHeader++ << 0x08;
+	
+	fileHeader.Characteristics = *pHeader++;
+	fileHeader.Characteristics = fileHeader.Characteristics | *pHeader++ << 0x08;
+
+	return fileHeader;
+}
+
 BYTE* PEFile::GetSignature() {
 	static BYTE signature[4];
 	DWORD numberOfBytesRead = 0;//已读取的长度

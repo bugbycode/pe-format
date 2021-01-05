@@ -9,6 +9,7 @@
 
 void PrintDosHeader(PIMAGE_DOS_HEADER pDosHeader);
 void PrintSignature(PEFile* pPE);
+void PrintFileHeader(PIMAGE_FILE_HEADER pFileHeader);
 
 int main(int argv, char* argc[]) {
 
@@ -18,17 +19,32 @@ int main(int argv, char* argc[]) {
 
 	PEFile* pPE = &peFile;
 	PIMAGE_DOS_HEADER pDosHeader = &pPE->dosHeader;
+	PIMAGE_FILE_HEADER pFileHeader = &pPE->fileHeader;
 
 	PrintDosHeader(pDosHeader);
 	PrintSignature(pPE);
+	PrintFileHeader(pFileHeader);
 	return 0;
 }
 
+void PrintFileHeader(PIMAGE_FILE_HEADER pFileHeader) {
+	printf("==================FILE HEADER BEGIN==========================\n");
+	printf("Machine               = %04x\n", pFileHeader->Machine);
+	printf("NumberOfSections      = %02x\n", pFileHeader->NumberOfSections);
+	printf("TimeDateStamp         = %04x\n", pFileHeader->TimeDateStamp);
+	printf("PointerToSymbolTable  = %04x\n", pFileHeader->PointerToSymbolTable);
+	printf("NumberOfSymbols       = %04x\n", pFileHeader->NumberOfSymbols);
+	printf("SizeOfOptionalHeader  = %02x\n", pFileHeader->SizeOfOptionalHeader);
+	printf("Characteristics       = %02x\n", pFileHeader->Characteristics);
+}
+
 void PrintSignature(PEFile* pPE) {
-	printf("signature    = %s", pPE->signature);
+	printf("==================Signature BEGIN==========================\n");
+	printf("signature    = %s\n", pPE->signature);
 }
 
 void PrintDosHeader(PIMAGE_DOS_HEADER pDosHeader) {
+	printf("==================DOS HEADER BEGIN==========================\n");
 	printf("e_magic      = %04x\n", pDosHeader->e_magic);
 	printf("e_cblp       = %04x\n", pDosHeader->e_cblp);
 	printf("e_cp         = %04x\n", pDosHeader->e_cp);

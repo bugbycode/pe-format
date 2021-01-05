@@ -11,11 +11,14 @@ class PEFile {
 public:
 
 	IMAGE_DOS_HEADER dosHeader;//DOS头
+
+	IMAGE_FILE_HEADER fileHeader;//PE头
 	
 	BYTE* signature;//PE标记
 
 	PEFile() {
 		this->dosHeader = {};
+		this->fileHeader = {};
 		this->signature = NULL;
 		this->filePath = NULL;
 		this->fileHandle = NULL;
@@ -27,6 +30,7 @@ public:
 		this->fileHandle = OpenFile();
 		this->dosHeader = GetDosHeader();
 		this->signature = GetSignature();
+		this->fileHeader = GetFileHeader();
 	}
 
 	~PEFile() {
@@ -58,6 +62,11 @@ private:
 	获取DOS头信息
 	*/
 	IMAGE_DOS_HEADER GetDosHeader();
+
+	/*
+	获取PE头
+	*/
+	IMAGE_FILE_HEADER GetFileHeader();
 
 	/*
 	获取PE标记
